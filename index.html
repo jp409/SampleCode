@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        
+        <title>PSU MyFacility</title>
+        
+        <meta charset="utf-8">
+        <meta name="description" content="">
+        <meta name="HandheldFriendly" content="True">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1, minimum-scale=0.5, width=device-width, target-densitydpi=device-dpi" />
+        <meta http-equiv="cleartype" content="on">
+            
+        <link rel="stylesheet" href="css/jquery.mobile-1.3.2.min.css">
+        <link rel="stylesheet" href="css/jquery.jqplot.css">
+        <link rel="stylesheet" href="css/main.css" type="text/css">
+
+        <script type="text/javascript" src="js/jquery-2.0.3.min.js"></script>
+        <script type="text/javascript" src="js/jquery.mobile-1.3.2.min.js"></script>
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="http://54.213.92.113:8080/socket.io/socket.io.js"></script>
+        <script type="text/javascript" src="js/jquery.jqplot.min.js"></script>
+        <script type="text/javascript" src="js/iscroll.js"></script>
+        
+        <script type="text/javascript" src="js/jqplot.canvasTextRenderer.min.js"></script>
+        <script type="text/javascript" src="js/jqplot.canvasAxisLabelRenderer.min.js"></script>
+        <script type="text/javascript" src="js/jqplot.dateAxisRenderer.min.js"></script>
+        
+        <style type="text/css" media="all">
+            
+         /**
+         *
+         * Pull down styles
+         *
+         */
+        #pullDown{
+            font-size:12px;
+            background:rgba(255,255,255,0.5);
+            height:40px;
+            line-height:40px;
+            padding:5px 10px;
+            font-weight:bold;
+            font-size:14px;
+            color:#fff;
+        }
+        #pullDown .pullDownIcon {
+            display:block; float:left;
+            width:40px; height:40px;
+            background:url(img/pull-icon@2x.png) 0 0 no-repeat;
+            -webkit-background-size:40px 80px; background-size:40px 80px;
+            -webkit-transition-property:-webkit-transform;
+            -webkit-transition-duration:250ms;
+        }
+        #pullDown .pullDownIcon {
+            -webkit-transform:rotate(0deg) translateZ(0);
+        }
+        
+        #pullDown.flip .pullDownIcon {
+            -webkit-transform:rotate(-180deg) translateZ(0);
+        }
+        
+        #pullDown.loading .pullDownIcon {
+            background-position:0 100%;
+            -webkit-transform:rotate(0deg) translateZ(0);
+            -webkit-transition-duration:0ms;
+            
+            -webkit-animation-name:loading;
+            -webkit-animation-duration:2s;
+            -webkit-animation-iteration-count:infinite;
+            -webkit-animation-timing-function:linear;
+        }
+        
+        @-webkit-keyframes loading {
+            from { -webkit-transform:rotate(0deg) translateZ(0); }
+            to { -webkit-transform:rotate(360deg) translateZ(0); }
+        }
+        
+            </style>
+
+    </head>
+    
+    <body>
+        
+        <!--  All links to switch pages within the app  -->
+        <a href="#page-two" id="two" data-transition="slide"></a>
+        <a href="#page-three" id="three" data-transition="slide"></a>
+        <a href="#page-one" id="onerev" data-transition="slide" data-direction="reverse"></a>
+
+        <!--  ******     PAGE 1    *******   -->
+        <div data-role="page" id="page-one" data-title="Page 1">
+        <div class = "pagecontent" style="z-index:3;">
+                
+            <div class = "menuslide" id="menu">
+                <div id = "menuspace">
+                <nav id = "nav4" onclick="menuback()"><span id="btn3"><img class="pull-left" id = "navimg3" src="img/back.png"></span><span id = "mentitle">Menu</span></nav>
+                <div class="list">
+                    <dl>
+                        <a href="#" style = "text-decoration:none;" onclick="window.open('http://www.athletics.psu.edu/psustrength/facilities/schedule/current_schedule.pdf', '_system');"><dd id = "mena1">Gym Schedule<img id = "pr1" class="pull-right" src="img/forward.png"></dd></a>
+                        <dt class="hr"></dt>
+                        <a  href="#" style = "text-decoration:none;" onclick="window.open('https://facebook.com/psustrength', '_system');"><dd id = "mena2">Find Us On Facebook<img class="pull-right" id = "pr2" src="img/forward.png"></dd></a>
+                        <dt class="hr"></dt>
+                        <a href="#" style = "text-decoration:none;" onclick="window.open('https://twitter.com/PSUstrength', '_system');"><dd id = "mena3">Tweet @PSUStrength<img class="pull-right" id = "pr3" src="img/forward.png"></dd></a>
+                        <dt class="hr"></dt>
+                        <dd id = "mena4" onclick="contactus()">Contact Us<img class="pull-right" id = "pr4" src="img/forward.png"></dd>
+                        <dt class="hr"></dt>
+                        <dt><span id="p"><p>Version 2.0</p><span></dt>
+                    </dl>
+                </div><!-- list -->
+                </div><!--  menu space -->
+                <div onclick = "menuback()" id ="emptyspace">
+                </div><!--  empty space -->
+                
+            </div>
+                
+            <div id="nav">
+                <span id="btn"><img onclick="menu()" src="img/menu.png" id = "navimg1"></span><span id="navtitle">Current Attendance</span>
+            </div>
+            
+            <div id="ultimatewrapper" style="background:#000;">
+                <div id="scroller" style="width:100%;height:100%;">
+                        
+                    <div id="pullDown">
+                        <span class="pullDownIcon"></span><span class="pullDownLabel">Pull down to refresh...</span>
+                    </div>
+                        
+                    <div id="container49">
+                        
+                        <div class="circlecontainer" id="circle" onclick = "predictor(0)">
+                            <div class = "gymname" id="gymname1">
+                                <p>Rec. Hall</p>
+                            </div>
+                            <div class="animatedcircle">
+                                <canvas id="myCanvas" width="175" height="175"></canvas>
+                            </div>
+                            <div class="stationarycircle">
+                                <canvas id="myCanvas2" width="175" height="175"></canvas>
+                            </div>
+                            <div class="inner" id = "innerfour">
+                                <div class="count" id="count"><span id="counter"></span><span id="percent1"></span></div>
+                                <div class="line" id = "line1" ></div>
+                                <div class="fraction" id="fraction"><span id="attend"></span><span id="max"></span></div>
+                            </div>
+                            <div class = "oc" id="ocone">
+                                <p id="oc1">CLOSED</p>
+                            </div>
+                        </div>
+                            
+                            
+                        <div class="circlecontainer" id="circle2" onclick="predictor(1)">
+                            <div class = "gymname" id = "gymname2">
+                                <p>White Building</p>
+                            </div>
+                            <div class="animatedcircle">
+                                <canvas id="myCanvas3" width="175" height="175"></canvas>
+                            </div>
+                            <div class="stationarycircle">
+                                <canvas id="myCanvas4" width="175" height="175"></canvas>
+                            </div>
+                            
+                            <div class="inner" id = "innerthree">
+                                <div class="count" id="count2"><span id="counter2"></span><span id="percent2"></span></div>
+                                <div class="line" id = "line2"></div>
+                                <div class="fraction" id="fraction2"><span id="attend2"></span><span id="max2"></span></div>
+                            </div>
+                            <div class = "oc" id="octwo">
+                                <p id="oc2">CLOSED</p>
+                            </div>
+                        </div>
+                            
+                            
+                        <div class="circlecontainer" id="circle3" onclick="predictor(2)">
+                            <div class = "gymname" id = "gymname3">
+                                <p>IM Building</p>
+                            </div>
+                            <div class="animatedcircle">
+                                <canvas id="myCanvas5" width="175" height="175"></canvas>
+                            </div>
+                            <div class="stationarycircle">
+                                <canvas id="myCanvas6" width="175" height="175"></canvas>
+                            </div>
+                            
+                            <div class="inner" id = "innertwo">
+                                <div class="count" id="count3"><span id="counter3"></span><span id="percent3"></span></div>
+                                <div class="line" id = "line3"></div>
+                                <div class="fraction" id="fraction3"><span id="attend3"></span><span id="max3"></span></div>
+                            </div>
+                            <div class = "oc" id = "octhree">
+                                <p id="oc3">CLOSED</p>
+                            </div>
+                        </div>
+                            
+                            
+                        <div class="circlecontainer" id="circle4" onclick="predictor(3)">
+                            <div class = "gymname" id = "gymname4">
+                                <p>Fitness Loft</p>
+                            </div>
+                            <div class="animatedcircle">
+                                <canvas id="myCanvas7" width="175" height="175"></canvas>
+                            </div>
+                            <div class="stationarycircle">
+                                <canvas id="myCanvas8" width="175" height="175"></canvas>
+                            </div>
+                                
+                            <div class="inner" id = "innerone">
+                                <div class="count" id="count4"><span id="counter4"></span><span id="percent4"></span></div>
+                                <div class="line" id = "line4"></div>
+                                <div class="fraction" id="fraction4"><span id="attend4"></span><span id="max4"></span></div>
+                            </div>
+                            <div class = "oc" id="ocfour">
+                                <p id = "oc4">COMING SOON!</p>
+                            </div>
+                        </div>
+                    </div><!-- content 49 -->
+                </div><!-- scroller -->
+            </div><!-- ultimate wrapper -->
+    </div><!-- Page Content -->
+    </div><!--   Page 1   -->
+        
+        
+    <!--  ******     PAGE 2    *******   -->
+    <div data-role="page" id="page-two" data-title="Page 2">
+            
+    <div class = "pagecontent" id = "predictorcontent" style="z-index:2; display:none">
+
+        <div id="nav2" onclick="backtoone()">
+            <span id="btn2"><img id = "navimg2" src="img/back.png"></span><span id="name">gym</span>
+        </div>
+
+        <div id = "box">
+        <div id="date">0/0/00</div>
+        </div>
+        <div id = "box2">
+        <div id = "pattend">Predicted Attendance</div>
+        </div>
+        <div id = "box3">
+        <div id="percent"><span id="percentage">0</span><span id="percent69">%</span></div>
+        </div>
+        <div ="box4">
+        <div id="displayattend"><span id="predictedattend">0</span><span id = "slash">/</span><span id = "maximumattend">0</span></div>
+        </div>
+        
+        <div id="days">
+            <div class="day" id="today" onclick="changeday(0)">Su</div>
+            <div class="day" id="day1" onclick="changeday(1)">M</div>
+            <div class="day" id="day2" onclick="changeday(2)">Tu</div>
+            <div class="day" id="day3" onclick="changeday(12)">W</div>
+            <div class="day" id="day4" onclick="changeday(4)">Tr</div>
+            <div class="day" id="day5" onclick="changeday(5)">F</div>
+            <div class="day" id="day6" onclick="changeday(6)">Sa</div>
+        </div>
+
+        <div id="wrapping">
+            <div id="linediv">
+                <div id="time"><span id="hours"></span>:<span id="min"></span><span id="ampm"></span></div>
+                <div id="line"></div>
+            </div>
+            <div id="chart1" style="height:100%;width:100%;"></div>
+        </div><!--  wrapping  -->
+
+
+    </div><!--   Page Content   -->
+    </div><!--   Page 2   -->
+    
+    <!--  ******     PAGE 3    *******   -->
+    <div data-role="page" id="page-three" data-title="Page 3">
+    
+    <div class = "pagecontent" id = "contactcontent" style = "z-index:0;display:none;">
+    
+        <div id="nav3" onclick="backtoone()">
+            <span id="btn4"><img src="img/back.png" id = "navimg4" ></span><span id = "name2">Contact Us</span>
+        </div>
+        <div id="middlecenter">
+        <div class = "rightcontent">
+            <img id="contimg1" src="img/psufitness.png" width="100">
+            <h1><span id = "conttitle1">Penn State Strength and Fitness</span></h1>
+            <p id ="contp1">Call us at:<a href="tel:+814-865-3488">814-865-FITT</a></p>
+            <p id ="contp2">Visit us online at:<a href="#" onclick="window.open('http://www.athletics.psu.edu/psustrength/', '_system');">www.athletics.psu.edu/psustrength/</a></p>
+    
+            <img id="contimg2" src="img/psuathletics.png" width="100">
+            <h1><span id="conttitle2">Penn State Athletics</h1>
+            <p id ="contp3">Call us at:<a href="tel:+1-800-648-8269">1-800-NITTANY</a></p>
+            <p id ="contp4">Visit us online at:<a href="#" onclick="window.open('http://www.gopsusports.com/', '_system');">www.gopsusports.com/</a></p>
+        </div>
+        </div>
+    </div><!--   Page Content   -->
+    </div><!--   Page 3   -->
+
+    <script type = "text/javascript">
+        
+        //Open up a connection to the node.js server via socket.io
+        //Send a command to the server to retreive attendance and waittime data
+        var socket  = io.connect('http://54.213.92.113:8080');
+        emittosocket();
+        
+        //Function that tells the socket to return the attendance for psu
+        function emittosocket(){
+        socket.emit('attendance', 1);
+        }
+    
+        //Socket returns a function that puts the attend and waittimes in variables
+        socket.on('attend', function(array){
+              
+              recat = array[0][0];
+              recwait = array[0][1];
+              whiteat = array[1][0];
+              whitewait = array[1][1];
+              imat = array[2][0];
+              imwait = array[2][1];
+              fitat = array[3][0];
+              fitwait = array[3][1];
+              
+              starterfunction(recat, recwait, whiteat, whitewait, imat, imwait, fitat, fitwait);
+        });
+    
+        //Socket returns a function that splits the perdictor array into other arrays
+        socket.on('jqplot', function(array){
+     
+              //for each incriment, find the time and save into the array 'line 1' along with the indexed attend values
+              //that you can get with line[0][1];
+              
+              //newarray = array;
+              //redrawchart(0);
+              
+              for (i=0;i<288;i++) {
+              var attend = array[i];
+              array1[i] = attend;
+              }
+              
+              for (i=288;i<576;i++) {
+              var attend = array[i];
+              var j = i - 288;
+              array2[j] = attend;
+              }
+              
+              for (i=576;i<864;i++) {
+              var attend = array[i];
+              var j = i - 576;
+              array3[j] = attend;
+              }
+              
+              for (i=864;i<1152;i++) {
+              var attend = array[i];
+              var j = i - 864;
+              array4[j] = attend;
+              }
+              
+              for (i=1152;i<1440;i++) {
+              var attend = array[i];
+              var j = i - 1152;
+              array5[j] = attend;
+              }
+              
+              for (i=1440;i<1728;i++) {
+              var attend = array[i];
+              var j = i - 1440;
+              array6[j] = attend;
+              }
+              
+              for (i=1728;i<2016;i++) {
+              var attend = array[i];
+              var j = i - 1728;
+              array7[j] = attend;
+              }
+              
+              redrawchart(0);
+              
+        });
+
+    </script>
+    
+    <!--  Must put script after js and html because it used id's from the page-->
+    <script type='text/javascript' src="js/custom.js"></script>
+    </body>
+</html>
